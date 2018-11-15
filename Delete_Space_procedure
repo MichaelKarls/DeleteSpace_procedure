@@ -1,0 +1,22 @@
+DECLARE
+  V_PART_NO VARCHAR2(50);
+  CURSOR V_IC IS
+    SELECT * FROM IMS_IC_PROGRAM_CONFIG; --DATA SOURCE from DataBase,
+BEGIN
+  FOR C_IC IN V_IC LOOP --Loop the entire table 
+    BEGIN
+      SELECT replace(A.part_no, ' ', '')  --Delete the space 
+        INTO V_PART_NO
+        FROM IMS_IC_PROGRAM_CONFIG A
+       WHERE ID = C_IC.ID;
+      UPDATE IMS_IC_PROGRAM_CONFIG  --Update the table's data
+         SET PART_NO = V_PART_NO
+       WHERE ID = C_IC.ID;
+    END;
+  END LOOP;
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    ROLLBACK;
+    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
